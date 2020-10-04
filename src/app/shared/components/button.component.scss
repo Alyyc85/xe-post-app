@@ -1,0 +1,37 @@
+@import "mixin";
+button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 16px;
+  cursor: pointer;
+  background: getColor($colors, "default");
+  color: $base;
+  text-transform: uppercase;
+  font-weight: bold;
+  @include trans();
+  &[disabled] {
+    color: transparentize($base, 0.4);
+    cursor: not-allowed;
+  }
+  &:hover {
+    color: darken($base, 10%);
+    background: lightgray;
+    @include trans();
+  }
+  @each $state, $col in (primary, getColor($colors, "primary")),
+    (secondary, getColor($colors, "secondary"))
+  {
+    &.#{$state} {
+      background: $col;
+      color: white;
+      &[disabled] {
+        background: transparentize($col, 0.4);
+      }
+      &:hover:not([disabled]) {
+        background: darken($col, 10%);
+        @include trans();
+      }
+    }
+  }
+}

@@ -53,7 +53,12 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/app/shared/styles"
+              ]
+            }
           },
           "configurations": {
             "production": {
@@ -146,6 +151,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "xe-app-post-angular"
 }

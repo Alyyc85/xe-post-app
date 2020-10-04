@@ -12,9 +12,11 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "es2020",
-    "lib": [
-      "es2018",
-      "dom"
-    ]
+    "lib": ["es2018", "dom"],
+    "paths": {
+      "xe-shared": ["src/app/shared/index"],
+      "xe-login": ["src/app/pages/login/index"],
+      "xe-404": ["src/app/pages/page404/index"]
+    }
   }
 }
