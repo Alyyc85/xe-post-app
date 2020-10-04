@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { XeButton } from 'src/app/shared/components';
+import { LoginService } from './login.service';
 
 @Component({
   selector: 'xe-login',
@@ -9,7 +11,9 @@ import { XeButton } from 'src/app/shared/components';
     <xe-card [formGroup]="frm" class="form">
       <xe-card-header class="header">
         <div class="title">Posts Login</div>
-        <i class="fas fa-user-circle"></i>
+        <div>Just another awesome Angular app</div>
+
+        <i class="fab fa-angular"></i>
       </xe-card-header>
       <xe-card-content class="content">
         <div>
@@ -29,28 +33,43 @@ import { XeButton } from 'src/app/shared/components';
             placeholder="Password"
           />
         </div>
+        <xe-button [btn]="loginButton" [disabled]="!valid"></xe-button>
       </xe-card-content>
-      <xe-button [btn]="loginButton"></xe-button>
-      <hr />
-      <div>Oppure <a>accedi</a> senza autenticazione</div>
-      <div>Just another awesome <i class="fab fa-angular"></i>Angular app</div>
+      <div>
+        Oppure <a (click)="login(false)">accedi</a> senza autenticazione
+      </div>
     </xe-card>
   `,
   styleUrls: ['login.component.scss'],
 })
-export class XeLoginComponent implements OnInit {
-  loginButton: XeButton = {
-    title: 'login',
-    state: 'primary',
-    click: () => this.login(),
-  };
+export class XeLoginComponent {
+  loginButton: XeButton;
+
   frm: FormGroup = new FormGroup({
     username: new FormControl(null, Validators.required),
-    password: new FormControl(null, Validators.minLength(5)),
+    password: new FormControl(null, [
+      Validators.required,
+      Validators.minLength(5),
+    ]),
   });
-  constructor() {}
+  get valid() {
+    return this.frm.valid;
+  }
+  constructor(private router: Router, private srv: LoginService) {
+    this.loginButton = {
+      title: 'login',
+      state: 'primary',
+      click: () => this.login(true),
+    };
+  }
 
-  ngOnInit() {}
-
-  private login() {}
+  login(authenticated: boolean) {
+    if (!authenticated) {
+      this.router.navigate(['posts']);
+      return;
+    }
+    this.srv
+      .authenticate(this.frm.get('username').value)
+      .subscribe((v) => console.log(v, 'vivivi'));
+  }
 }

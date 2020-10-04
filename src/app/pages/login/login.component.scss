@@ -11,7 +11,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("/src/assets/bgimg.jpg") no-repeat center;
+  background: url("/assets/bgimg.jpg") no-repeat center;
   background-size: cover;
   z-index: -1;
 }
@@ -24,8 +24,11 @@
   grid-template-columns: 1fr;
   padding: 32px;
   align-content: center;
-  row-gap: 12px;
   text-align: center;
+  .content {
+    display: grid;
+    row-gap: 12px;
+  }
 }
 
 .header {

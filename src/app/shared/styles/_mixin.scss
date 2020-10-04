@@ -46,3 +46,8 @@ $base: #1d1d38;
     background-color: transparentize(getColor($colors, "primary"), 0.6);
   }
 }
+a {
+  cursor: pointer;
+  text-decoration: underline;
+  color: getColor($colors, "primary");
+}

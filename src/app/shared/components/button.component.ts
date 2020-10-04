@@ -4,7 +4,6 @@ export interface XeButton {
   title: string;
   click: () => void;
   state: 'primary' | 'secondary' | 'default';
-  disabled?: boolean;
 }
 
 @Component({
@@ -14,7 +13,7 @@ export interface XeButton {
       role="button"
       [ngClass]="btn.state"
       (click)="btn.click()"
-      [disabled]="btn.disabled"
+      [disabled]="disabled"
     >
       {{ btn.title }}
     </button>
@@ -24,4 +23,5 @@ export interface XeButton {
 })
 export class XeButtonComponent {
   @Input() btn: XeButton;
+  @Input() disabled: boolean;
 }
