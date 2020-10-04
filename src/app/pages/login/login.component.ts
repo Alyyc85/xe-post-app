@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { XeButton } from 'src/app/shared/components';
 import { LoginService } from './login.service';
 
@@ -56,6 +57,11 @@ export class XeLoginComponent {
     return this.frm.valid;
   }
   constructor(private router: Router, private srv: LoginService) {
+    // Quando atterro alla login pulisco tutto perchè
+    // o ho fatto logout
+    // o è la prima autenticazione
+    // o sono stato reindirizzato per fare la login
+    this.srv.reset();
     this.loginButton = {
       title: 'login',
       state: 'primary',
@@ -70,6 +76,7 @@ export class XeLoginComponent {
     }
     this.srv
       .authenticate(this.frm.get('username').value)
-      .subscribe((v) => console.log(v, 'vivivi'));
+      .pipe(filter((v) => v === true))
+      .subscribe(() => this.router.navigate(['posts']));
   }
 }
