@@ -44,7 +44,10 @@ import { PostUnion, StateService, User } from 'src/app/core/state.service';
             "
           >
             <xe-card>
-              <xe-card-header class="c-header">
+              <xe-card-header
+                class="c-header"
+                [attr.style]="getStyleHeader(post.likes)"
+              >
                 {{ post.title }}
               </xe-card-header>
               <xe-card-content class="c-content">
@@ -128,6 +131,27 @@ export class XePostsComponent implements OnInit, OnDestroy {
         takeUntil(this._destroy$)
       )
       .subscribe(this.posts$);
+  }
+
+  getStyleHeader(likes: number): string {
+    const level = likes >= 42 ? 0 : 6 - Math.floor(likes / 6);
+    console.log(level);
+    switch (level) {
+      case 0:
+        return 'color: rgba(218,54,54,1); text-transform:uppercase';
+      case 1:
+        return 'color: rgba(218,54,54,0.8); text-transform:uppercase';
+      case 2:
+        return 'color: rgba(218,54,54,0.6); text-transform:uppercase';
+      case 3:
+        return 'color: rgba(0,0,0,0.9)';
+      case 4:
+        return 'color: rgba(0,0,0,0.6)';
+      case 5:
+        return 'color: rgba(0,0,0,0.5)';
+      case 6:
+        return 'color: rgba(0,0,0,0.3)';
+    }
   }
 
   private filterPost(txt: string): PostUnion[] {
