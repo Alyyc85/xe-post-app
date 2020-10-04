@@ -5,6 +5,7 @@ import {
   XeCardComponent,
   XeCardContentDirective,
   XeCardHeaderDirective,
+  XeDynamicHeadsComponent,
   XeValidationComponent,
 } from './components';
 
@@ -16,6 +17,7 @@ import {
     XeCardComponent,
     XeButtonComponent,
     XeValidationComponent,
+    XeDynamicHeadsComponent,
   ],
   declarations: [
     XeCardHeaderDirective,
@@ -23,6 +25,7 @@ import {
     XeCardComponent,
     XeButtonComponent,
     XeValidationComponent,
+    XeDynamicHeadsComponent,
   ],
 })
 export class SharedModule {}

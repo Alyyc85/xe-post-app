@@ -1,0 +1,21 @@
+@import "mixin";
+
+h1 {
+  color: getColor($colors, "primary");
+  &.super {
+    text-transform: uppercase;
+  }
+}
+h2 {
+  color: transparentize(getColor($colors, "primary"), 0.2);
+}
+h3 {
+}
+h4 {
+}
+h5 {
+  color: getColor($colors, "secondary");
+}
+h6 {
+  color: getColor($colors, "secondary");
+}

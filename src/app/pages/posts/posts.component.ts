@@ -44,11 +44,20 @@ import { PostUnion, StateService, User } from 'src/app/core/state.service';
             "
           >
             <xe-card>
-              <xe-card-header
+              <!-- Esempio stile applicato direttamente 
+            <xe-card-header
                 class="c-header"
                 [attr.style]="getStyleHeader(post.likes)"
               >
                 {{ post.title }}
+              </xe-card-header> -->
+              <!-- Esempio con componente
+              che gestisce internamente un ngSwitch -->
+              <xe-card-header class="c-header">
+                <xe-dynamic-heads
+                  [level]="getHeaderLevel(post.likes)"
+                  [title]="post.title"
+                ></xe-dynamic-heads>
               </xe-card-header>
               <xe-card-content class="c-content">
                 {{ post.body }}
@@ -133,6 +142,19 @@ export class XePostsComponent implements OnInit, OnDestroy {
       .subscribe(this.posts$);
   }
 
+  getHeaderLevel(likes: number): number {
+    const level = likes >= 42 ? 0 : 6 - Math.floor(likes / 6);
+    return level;
+  }
+  /**
+   * Workaround template header
+   * esempi diversi per raggiungere
+   * scopi simili
+   *
+   * @param {number} likes
+   * @returns {string}
+   * @memberof XePostsComponent
+   */
   getStyleHeader(likes: number): string {
     const level = likes >= 42 ? 0 : 6 - Math.floor(likes / 6);
     console.log(level);

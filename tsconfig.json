@@ -20,5 +20,6 @@
       "xe-posts": ["src/app/pages/posts/index"],
       "utils/*": ["src/app/shared/utils/*"]
     }
-  }
+  },
+  "angularCompilerOptions": { "enableIvy": false }
 }
