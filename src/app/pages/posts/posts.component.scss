@@ -2,7 +2,7 @@
 
 .wrapper {
   position: fixed;
-  top: 0;
+  top: 58px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -16,7 +16,7 @@
 }
 .container {
   background: transparentize(black, 0.5);
-  padding: 6em 2em;
+  padding: 2em;
   border-radius: 4px;
 }
 .header {
@@ -58,6 +58,12 @@
       font-size: 16px;
       color: $base;
     }
+    .txt {
+      font-family: "Nunito", sans-serif;
+      font-size: 16px;
+      color: $base;
+      text-align: right;
+    }
     .fa-sign-out-alt {
       color: getColor($colors, "primary");
       font-size: 30px;
@@ -73,4 +79,43 @@
   column-gap: 12px;
   row-gap: 12px;
   padding: 8px;
+}
+
+// Cards
+.c-header {
+  @include bigHead;
+}
+.c-content {
+  text-align: justify;
+}
+
+.c-info {
+  display: grid;
+  grid-template-columns: 100px auto;
+  align-items: center;
+  .c-likes {
+    font-size: 18px;
+    color: getColor($colors, "primary");
+    cursor: pointer;
+    i {
+      margin-right: 8px;
+    }
+  }
+  .c-tag {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 128px);
+    column-gap: 8px;
+    row-gap: 8px;
+    justify-content: end;
+
+    div {
+      background: #a8a8a8;
+      color: white;
+      text-align: center;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  }
 }

@@ -62,6 +62,7 @@ export class XeLoginComponent {
     // o è la prima autenticazione
     // o sono stato reindirizzato per fare la login
     this.srv.reset();
+    this.srv.loadPosts();
     this.loginButton = {
       title: 'login',
       state: 'primary',

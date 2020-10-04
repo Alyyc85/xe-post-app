@@ -13,8 +13,10 @@ export class XeCardContentDirective {}
   selector: 'xe-card',
   template: `
     <div class="container">
-      <ng-content select="xe-card-header"></ng-content>
-      <ng-content select="xe-card-content"></ng-content>
+      <div class="content">
+        <ng-content select="xe-card-header"></ng-content>
+        <ng-content select="xe-card-content"></ng-content>
+      </div>
       <div class="footer">
         <ng-content></ng-content>
       </div>

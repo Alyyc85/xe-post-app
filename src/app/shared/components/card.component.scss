@@ -1,9 +1,17 @@
 .container {
   display: grid;
+  background: white;
+  height: 100%;
+}
+.content {
+  padding: 16px;
+  display: grid;
   row-gap: 12px;
 }
 
 .footer {
   border-top: 1px solid #e7e7e7;
   padding: 12px;
+  display: grid;
+  align-items: center;
 }

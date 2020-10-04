@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 export interface User {
   id: number;
@@ -32,6 +32,12 @@ const TAGS = [
   'framework',
 ];
 
+/**
+ * finto generatore di informazioni
+ * da unire ai post
+ *
+ * @returns
+ */
 function generateFakeLikesNTags() {
   let INFOS: { [id: string]: Info };
 
@@ -51,11 +57,34 @@ function generateFakeLikesNTags() {
     }, {});
   return INFOS;
 }
-
+/**
+ * Servizio singleton dell'app per gestire uno
+ * "stato" dell'applicazione
+ *
+ * Per non usare librerie è stato utilizzato
+ * direttamente il localStorage per la cache
+ *
+ * @export
+ * @class StateService
+ */
 @Injectable({ providedIn: 'root' })
 export class StateService {
-  constructor() {}
-
+  private _posts$ = new BehaviorSubject<PostUnion[]>([]);
+  constructor() {
+    const cachedInfo = localStorage.getItem('INFO');
+    if (cachedInfo) {
+      this._posts$.next(JSON.parse(cachedInfo));
+    }
+  }
+  /**
+   * Finto e filosoficamente inesatto
+   * dispatch e cache delle informazioni di un utente
+   * volto solo a abbellire l'app
+   * Le informazioni sono diramate con il `getUserInfo()`
+   *
+   * @param User info
+   * @memberof StateService
+   */
   dispatchUserInfo(info: User) {
     localStorage.setItem('user', JSON.stringify(info));
   }
@@ -63,6 +92,18 @@ export class StateService {
     return of(JSON.parse(localStorage.getItem('user')));
   }
 
+  /**
+   * Alla login carico già tutti i post
+   * perchè posso accedere ai post senza
+   * o con autenticazione
+   * passo i post della chiamata API a questo
+   * metodo che li unisce alle info
+   * e li salva la prima volta nello "stato"
+   * ora semplificato con il localStorage
+   *
+   * @param Post[] posts
+   * @memberof StateService
+   */
   dispatchPostNlikesNtags(posts: Post[]) {
     const infos = generateFakeLikesNTags();
     localStorage.setItem(
@@ -78,7 +119,37 @@ export class StateService {
         }))
       )
     );
+    this._posts$.next(JSON.parse(localStorage.getItem('INFO')));
   }
+
+  /**
+   * La source of truth dei post combinati
+   * e cachati nel localStorage
+   *
+   * @returns `Observable<PostUnion[]>`
+   * @memberof StateService
+   */
+  getPosts(): Observable<PostUnion[]> {
+    return this._posts$.asObservable();
+  }
+  /**
+   * Metodo di manipolazione dei post
+   * Aggiorna la variabile interna che notificherà chi
+   * è in ascolto e riscrive la cache per l'F5
+   *
+   * @param PostUnion[] posts
+   * @memberof StateService
+   */
+  updatePosts(posts: PostUnion[]) {
+    this._posts$.next(posts);
+    localStorage.setItem('INFO', JSON.stringify(posts));
+  }
+  /**
+   * Pulisce il localStorage alla creazione dell'istanza
+   * del LoginComponent
+   *
+   * @memberof StateService
+   */
   reset() {
     localStorage.clear();
   }
