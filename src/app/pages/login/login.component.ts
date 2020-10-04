@@ -33,9 +33,8 @@ import { XeButton } from 'src/app/shared/components';
       <xe-button [btn]="loginButton"></xe-button>
       <hr />
       <div>Oppure <a>accedi</a> senza autenticazione</div>
+      <div>Just another awesome <i class="fab fa-angular"></i>Angular app</div>
     </xe-card>
-
-    <div>Just another awesome <i class="fab fa-angular"></i>Angular app</div>
   `,
   styleUrls: ['login.component.scss'],
 })

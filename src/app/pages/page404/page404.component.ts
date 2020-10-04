@@ -11,6 +11,6 @@ import { Router } from '@angular/router';
 export class XePage404Component {
   constructor(private router: Router) {}
   goToLogin() {
-    this.router.navigate(['/src/login']);
+    this.router.navigate(['login']);
   }
 }

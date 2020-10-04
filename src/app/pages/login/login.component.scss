@@ -11,7 +11,33 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("src/assets/login-img.jpg") no-repeat center;
+  background: url("/src/assets/bgimg.jpg") no-repeat center;
   background-size: cover;
   z-index: -1;
+}
+
+.form {
+  margin: 0 auto;
+  width: 400px;
+  background: white;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 32px;
+  align-content: center;
+  row-gap: 12px;
+  text-align: center;
+}
+
+.header {
+  .title {
+    @include bigHead();
+    font-size: 32px;
+    color: getColor($colors, "primary");
+  }
+  i {
+    font-size: 40px;
+  }
+}
+input {
+  @include ctrlStyle;
 }
