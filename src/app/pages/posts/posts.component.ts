@@ -1,8 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map, takeUntil, tap } from 'rxjs/operators';
 import { PostUnion, StateService, User } from 'src/app/core/state.service';
 
 @Component({
@@ -56,7 +61,12 @@ import { PostUnion, StateService, User } from 'src/app/core/state.service';
                   <i class="fas fa-thumbs-up"></i>{{ post.likes }}
                 </div>
                 <div class="c-tag">
-                  <div *ngFor="let tag of post.hashtags">#{{ tag }}</div>
+                  <div
+                    *ngFor="let tag of post.hashtags"
+                    (click)="handleTag(tag)"
+                  >
+                    #{{ tag }}
+                  </div>
                 </div>
               </div>
             </xe-card>
@@ -72,11 +82,13 @@ import { PostUnion, StateService, User } from 'src/app/core/state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['posts.component.scss'],
 })
-export class XePostsComponent implements OnInit {
+export class XePostsComponent implements OnInit, OnDestroy {
   user$: Observable<User>;
   posts$ = new BehaviorSubject<PostUnion[]>([]);
   search = new FormControl(null);
   loggedState: boolean;
+  private _bkPost$ = new BehaviorSubject<PostUnion[]>([]);
+  private _destroy$ = new Subject<void>();
 
   constructor(private stateSrv: StateService, private router: Router) {}
 
@@ -86,7 +98,9 @@ export class XePostsComponent implements OnInit {
       .pipe(tap((user) => (this.loggedState = user ? true : false)));
     this.stateSrv.getPosts().subscribe((res) => {
       this.posts$.next(res);
+      this._bkPost$.next(res);
     });
+    this.handleSearch();
   }
   goToLogin() {
     this.router.navigate(['login']);
@@ -101,8 +115,30 @@ export class XePostsComponent implements OnInit {
     const matched = this.posts$.value[idx];
     matched.likes = ++matched.likes;
     this.stateSrv.updatePosts(this.posts$.value);
+    this._bkPost$.next(this.posts$.value);
+  }
+
+  handleTag(tag: string) {
+    this.search.patchValue(tag);
+  }
+  private handleSearch() {
+    this.search.valueChanges
+      .pipe(
+        map((txt) => this.filterPost(txt)),
+        takeUntil(this._destroy$)
+      )
+      .subscribe(this.posts$);
+  }
+
+  private filterPost(txt: string): PostUnion[] {
+    const copy = JSON.parse(JSON.stringify(this._bkPost$.value)) as PostUnion[];
+    return copy.filter((c) => c.hashtags.find((h) => h.includes(txt)));
   }
   trackByFn(index: number, e: any) {
     return index;
+  }
+  ngOnDestroy() {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }
