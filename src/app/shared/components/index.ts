@@ -4,3 +4,4 @@ export {
   XeCardContentDirective,
   XeCardHeaderDirective,
 } from './card.component';
+export { XeValidationComponent } from './validation.component';

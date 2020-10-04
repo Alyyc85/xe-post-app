@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { XeButton } from 'src/app/shared/components';
 
 @Component({
@@ -44,6 +45,10 @@ export class XeLoginComponent implements OnInit {
     state: 'primary',
     click: () => this.login(),
   };
+  frm: FormGroup = new FormGroup({
+    username: new FormControl(null, Validators.required),
+    password: new FormControl(null, Validators.minLength(5)),
+  });
   constructor() {}
 
   ngOnInit() {}
