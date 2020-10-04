@@ -54,10 +54,10 @@ import { PostUnion, StateService, User } from 'src/app/core/state.service';
               <!-- Esempio con componente
               che gestisce internamente un ngSwitch -->
               <xe-card-header class="c-header">
-                <xe-dynamic-heads
+                <xe-post-heads
                   [level]="getHeaderLevel(post.likes)"
                   [title]="post.title"
-                ></xe-dynamic-heads>
+                ></xe-post-heads>
               </xe-card-header>
               <xe-card-content class="c-content">
                 {{ post.body }}

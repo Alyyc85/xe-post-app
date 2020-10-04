@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'xe-dynamic-heads',
+  selector: 'xe-post-heads',
   template: `
     <ng-container [ngSwitch]="level">
       <h6 *ngSwitchCase="6">{{ title }}</h6>
@@ -14,9 +14,9 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['dynamic-heads.component.scss'],
+  styleUrls: ['post-heads.component.scss'],
 })
-export class XeDynamicHeadsComponent {
+export class XePostHeadsComponent {
   @Input() level: number;
   @Input() title: string;
 }

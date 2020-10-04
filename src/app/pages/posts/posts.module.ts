@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from 'xe-shared';
+import { XePostHeadsComponent } from './post-heads.component';
 import { XePostsComponent } from './posts.component';
 import { PostsService } from './posts.service';
 
@@ -16,7 +17,7 @@ const routes: Routes = [{ path: '', component: XePostsComponent }];
     SharedModule,
   ],
   exports: [RouterModule],
-  declarations: [XePostsComponent],
+  declarations: [XePostsComponent, XePostHeadsComponent],
   providers: [PostsService],
 })
 export class PostsModule {}
