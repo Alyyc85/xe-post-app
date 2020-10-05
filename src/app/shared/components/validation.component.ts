@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
 /**
  * Componente che interpreta gli errori di validazione
  * di un FormControl e li mappa rispetto a una
@@ -23,7 +23,7 @@ import { FormControl } from '@angular/forms';
   ],
 })
 export class XeValidationComponent {
-  @Input() ctrl: FormControl;
+  @Input() ctrl: AbstractControl;
   constructor() {}
 
   get errors(): string[] {

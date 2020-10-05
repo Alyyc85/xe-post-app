@@ -21,5 +21,10 @@
       "utils/*": ["src/app/shared/utils/*"]
     }
   },
-  "angularCompilerOptions": { "enableIvy": false }
+  "angularCompilerOptions": {
+    "enableIvy": true,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
 }
