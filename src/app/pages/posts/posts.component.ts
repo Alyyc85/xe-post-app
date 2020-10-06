@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
 import { PostUnion, StateService, User } from 'src/app/core/state.service';
+import { PostsService } from './posts.service';
 
 @Component({
   selector: 'xe-posts',
@@ -24,11 +25,9 @@ import { PostUnion, StateService, User } from 'src/app/core/state.service';
             placeholder="Cerca per tag"
           />
           <i class="fas fa-search"></i>
-          <!-- -->
-          <div class="user" *ngIf="user$ | async; else notLogged">
-            <div>
-              <i class="fas fa-user-circle"></i> {{ (user$ | async).name }}
-            </div>
+          <div class="user" *ngIf="user$ | async as user; else notLogged">
+            <!-- MI SON SALVATO VALORE SU user PERCHE' ALTRIMENTI (user$ | async).name FACEVA DOPPIA CHIAMATA HTTP -->
+            <div><i class="fas fa-user-circle"></i> {{ user.name }}</div>
             <i class="fas fa-sign-out-alt" (click)="logout()"></i>
           </div>
         </div>
@@ -102,16 +101,30 @@ export class XePostsComponent implements OnInit, OnDestroy {
   private _bkPost$ = new BehaviorSubject<PostUnion[]>([]);
   private _destroy$ = new Subject<void>();
 
-  constructor(private stateSrv: StateService, private router: Router) {}
+  constructor(
+    private stateSrv: StateService,
+    private router: Router,
+    private postSrv: PostsService
+  ) {
+    this.user$ = this.stateSrv.getUserInfo().pipe(
+      tap((user) => {
+        this.loggedState = user ? true : false;
+        //CARICO I POST DELL'UTENTE CORRENTE
+        this.postSrv.loadPostsByUser(user?.id);
+      }),
+      takeUntil(this._destroy$) //GESTIONE UNSUBSCRIBE!!
+    );
+  }
 
   ngOnInit() {
-    this.user$ = this.stateSrv
-      .getUserInfo()
-      .pipe(tap((user) => (this.loggedState = user ? true : false)));
-    this.stateSrv.getPosts().subscribe((res) => {
-      this.posts$.next(res);
-      this._bkPost$.next(res);
-    });
+    this.stateSrv
+      .getPosts()
+      .pipe(takeUntil(this._destroy$)) //GESTIONE UNSUBSCRIBE!!
+      .subscribe((res) => {
+        //TODO: IO QUESTA PARTE DI GESTIONE L'AVREI VISTA BENE ESTERNALIZZATA NEL PostService MA VA BENE ANCHE COSI' ;-)
+        this.posts$.next(res);
+        this._bkPost$.next(res);
+      });
     this.handleSearch();
   }
   goToLogin() {
