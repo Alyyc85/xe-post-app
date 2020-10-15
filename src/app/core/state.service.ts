@@ -91,6 +91,9 @@ export class StateService {
   getUserInfo(): Observable<User> {
     return of(JSON.parse(localStorage.getItem('user')));
   }
+  getUser() {
+    return JSON.parse(localStorage.getItem('user'));
+  }
 
   /**
    * Alla login carico già tutti i post

@@ -1,25 +1,16 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { StateService } from './state.service';
 
 @Injectable()
 export class AuthGuardService implements CanActivate, OnDestroy {
-  private _logged$ = new BehaviorSubject<boolean>(false);
   private _destroy$ = new Subject<void>();
-  constructor(private stateSrv: StateService, private router: Router) {
-    this.stateSrv
-      .getUserInfo()
-      .pipe(
-        map((user) => (user ? true : false)),
-        takeUntil(this._destroy$)
-      )
-      .subscribe(this._logged$);
-  }
+  constructor(private stateSrv: StateService, private router: Router) {}
 
   canActivate() {
-    if (!this._logged$.value) {
+    console.log(this.stateSrv.getUser());
+    if (!this.stateSrv.getUser()) {
       this.router.navigate(['**']);
       return false;
     }

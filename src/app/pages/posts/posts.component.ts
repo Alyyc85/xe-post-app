@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { map, takeUntil, tap } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { PostUnion, StateService } from 'src/app/core/state.service';
 import { BasePostClass } from './post-base';
 import { PostsService } from './posts.service';
@@ -82,14 +82,12 @@ export class XePostsComponent extends BasePostClass implements OnInit {
     protected route: ActivatedRoute
   ) {
     super(router, route, stateSrv);
-    this.user$.pipe(
-      tap((user) => {
-        this.loggedState = user ? true : false;
-        //CARICO I POST DELL'UTENTE CORRENTE
-        this.postSrv.loadPostsByUser(user?.id);
-      }),
-      takeUntil(this._destroy$)
-    );
+    this.user$.pipe(takeUntil(this._destroy$)).subscribe((user) => {
+      console.log;
+      this.loggedState = user ? true : false;
+      //CARICO I POST DELL'UTENTE CORRENTE
+      this.postSrv.loadPostsByUser(user?.id);
+    });
   }
 
   ngOnInit() {
