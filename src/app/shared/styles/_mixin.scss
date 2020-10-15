@@ -51,3 +51,10 @@ a {
   text-decoration: underline;
   color: getColor($colors, "primary");
 }
+
+*[role="button"] {
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}

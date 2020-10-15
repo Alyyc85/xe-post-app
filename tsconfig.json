@@ -18,6 +18,7 @@
       "xe-login": ["src/app/pages/login/index"],
       "xe-404": ["src/app/pages/page404/index"],
       "xe-posts": ["src/app/pages/posts/index"],
+      "xe-layout": ["src/app/layout/index"],
       "utils/*": ["src/app/shared/utils/*"]
     }
   },

@@ -1,0 +1,35 @@
+@import "mixin";
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 16px;
+}
+
+.comment {
+  background: white;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 8px;
+  align-items: center;
+  img {
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .detail {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 30px 60px auto;
+    align-items: center;
+    border-left: 1px solid #f4f4f4;
+    padding-left: 16px;
+  }
+  .title {
+    @include bigHead;
+  }
+  .from {
+    text-align: right;
+    color: #ccc;
+  }
+}

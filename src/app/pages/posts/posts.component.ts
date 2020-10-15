@@ -1,118 +1,94 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
-import { PostUnion, StateService, User } from 'src/app/core/state.service';
+import { PostUnion, StateService } from 'src/app/core/state.service';
+import { BasePostClass } from './post-base';
 import { PostsService } from './posts.service';
 
 @Component({
   selector: 'xe-posts',
   template: `
-    <div class="wrapper">
-      <!-- HEADER -->
-      <div class="header">
-        <div><i class="fas fa-mail-bulk"></i>Read Posts</div>
-        <div class="toolbar">
-          <input
-            type="text"
-            [formControl]="search"
-            placeholder="Cerca per tag"
-          />
-          <i class="fas fa-search"></i>
-          <div class="user" *ngIf="user$ | async as user; else notLogged">
-            <!-- MI SON SALVATO VALORE SU user PERCHE' ALTRIMENTI (user$ | async).name FACEVA DOPPIA CHIAMATA HTTP -->
-            <div><i class="fas fa-user-circle"></i> {{ user.name }}</div>
-            <i class="fas fa-sign-out-alt" (click)="logout()"></i>
-          </div>
-        </div>
-      </div>
-      <!-- CONTENT -->
-      <div class="container">
-        <div class="content">
-          <ng-container
-            *ngFor="
-              let post of posts$ | async;
-              let i = index;
-              trackBy: trackByFn
-            "
+    <xe-wrapper
+      title="Read Posts"
+      [user]="user$ | async"
+      (logoutClick)="logout()"
+      (loginClick)="goToLogin()"
+    >
+      <xe-wrapper-toolbar>
+        <input type="text" [formControl]="search" placeholder="Cerca per tag" />
+        <i class="fas fa-search"></i>
+      </xe-wrapper-toolbar>
+      <div class="content">
+        <ng-container
+          *ngFor="let post of posts$ | async; let i = index; trackBy: trackByFn"
+        >
+          <xe-card>
+            <!-- Esempio stile applicato direttamente 
+        <xe-card-header
+            class="c-header"
+            [attr.style]="getStyleHeader(post.likes)"
           >
-            <xe-card>
-              <!-- Esempio stile applicato direttamente 
-            <xe-card-header
-                class="c-header"
-                [attr.style]="getStyleHeader(post.likes)"
+            {{ post.title }}
+          </xe-card-header> -->
+            <!-- Esempio con componente
+          che gestisce internamente un ngSwitch -->
+            <xe-card-header class="c-header">
+              <xe-post-heads
+                [level]="getHeaderLevel(post.likes)"
+                [title]="post.title"
+                (click)="goToDetail(post.id)"
+                [attr.role]="loggedState ? 'button' : ''"
+              ></xe-post-heads>
+            </xe-card-header>
+            <xe-card-content class="c-content">
+              {{ post.body }}
+            </xe-card-content>
+            <div class="c-info">
+              <div
+                class="c-likes"
+                [ngStyle]="{
+                  cursor: loggedState ? 'pointer' : 'default'
+                }"
+                (click)="incrementLike(i)"
               >
-                {{ post.title }}
-              </xe-card-header> -->
-              <!-- Esempio con componente
-              che gestisce internamente un ngSwitch -->
-              <xe-card-header class="c-header">
-                <xe-post-heads
-                  [level]="getHeaderLevel(post.likes)"
-                  [title]="post.title"
-                ></xe-post-heads>
-              </xe-card-header>
-              <xe-card-content class="c-content">
-                {{ post.body }}
-              </xe-card-content>
-              <div class="c-info">
-                <div
-                  class="c-likes"
-                  [ngStyle]="{
-                    cursor: loggedState ? 'pointer' : 'default'
-                  }"
-                  (click)="incrementLike(i)"
-                >
-                  <i class="fas fa-thumbs-up"></i>{{ post.likes }}
-                </div>
-                <div class="c-tag">
-                  <div
-                    *ngFor="let tag of post.hashtags"
-                    (click)="handleTag(tag)"
-                  >
-                    #{{ tag }}
-                  </div>
+                <i class="fas fa-thumbs-up"></i>{{ post.likes }}
+              </div>
+              <div class="c-tag">
+                <div *ngFor="let tag of post.hashtags" (click)="handleTag(tag)">
+                  #{{ tag }}
                 </div>
               </div>
-            </xe-card>
-          </ng-container>
-        </div>
+            </div>
+          </xe-card>
+        </ng-container>
       </div>
-    </div>
-    <!-- @else -->
-    <ng-template #notLogged>
-      <div class="txt"><a (click)="goToLogin()">Accedi</a> per continuare</div>
-    </ng-template>
+    </xe-wrapper>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['posts.component.scss'],
 })
-export class XePostsComponent implements OnInit, OnDestroy {
-  user$: Observable<User>;
+export class XePostsComponent extends BasePostClass implements OnInit {
   posts$ = new BehaviorSubject<PostUnion[]>([]);
   search = new FormControl(null);
   loggedState: boolean;
   private _bkPost$ = new BehaviorSubject<PostUnion[]>([]);
-  private _destroy$ = new Subject<void>();
 
   constructor(
-    private stateSrv: StateService,
-    private router: Router,
-    private postSrv: PostsService
+    protected stateSrv: StateService,
+    protected router: Router,
+    private postSrv: PostsService,
+    protected route: ActivatedRoute
   ) {
-    this.user$ = this.stateSrv.getUserInfo().pipe(
+    super(router, route, stateSrv);
+    this.user$.pipe(
       tap((user) => {
         this.loggedState = user ? true : false;
         //CARICO I POST DELL'UTENTE CORRENTE
         this.postSrv.loadPostsByUser(user?.id);
       }),
-      takeUntil(this._destroy$) //GESTIONE UNSUBSCRIBE!!
+      takeUntil(this._destroy$)
     );
   }
 
@@ -127,11 +103,9 @@ export class XePostsComponent implements OnInit, OnDestroy {
       });
     this.handleSearch();
   }
-  goToLogin() {
-    this.router.navigate(['login']);
-  }
-  logout() {
-    this.router.navigate(['login']);
+
+  goToDetail(postId: number) {
+    this.router.navigate(['detail', postId], { relativeTo: this.route });
   }
   incrementLike(idx: number) {
     if (!this.loggedState) {
@@ -195,9 +169,5 @@ export class XePostsComponent implements OnInit, OnDestroy {
   }
   trackByFn(index: number, e: any) {
     return index;
-  }
-  ngOnDestroy() {
-    this._destroy$.next();
-    this._destroy$.complete();
   }
 }
